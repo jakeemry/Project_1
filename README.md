@@ -75,11 +75,11 @@ The playbook implements the following tasks:
 
 The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
 
-[](https://github.com/jakeemry/Project_1/blob/main/Diagrams/docker_ps_output.PNG)
+![](https://github.com/jakeemry/Project_1/blob/main/Diagrams/docker_ps_output.PNG)
 
 ### Target Machines & Beats
 This ELK server is configured to monitor the following machines:
-- _TODO: List the IP addresses of the machines you are monitoring_
+- DVWA VMs at 10.0.0.6, 10.0.0.7 and 10.0.0.9, respectively.
 
 We have installed the following Beats on these machines:
 - Filebeat
@@ -90,14 +90,48 @@ These Beats allow us to collect the following information from each machine:
 - Metricbeat: Metricbeat detects changes in system metrics, such as CPU usage. We use it to detect SSH login attempts, failed sudo escalations, and CPU/RAM statistics.
 
 ### Using the Playbook
-In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
+In order to use the playbook, you will need to have an Ansible control node already configured. We use the jump box assuming you have such a control node provisioned: 
 
 SSH into the control node and follow the steps below:
-- Copy the _____ file to _____.
-- Update the _____ file to include...
-- Run the playbook, and navigate to ____ to check that the installation worked as expected.
+- Copy the playbooks to the Ansible Control Node
+- Update the hosts file to include which VMs to run each playbook on.
+- Run the playbook, and navigate to http://40.122.55.212:5601/app/kibana#/ to check that the installation worked as expected.
 
-_TODO: Answer the following questions to fill in the blanks:_
-- _Which file is the playbook? Where do you copy it?_
-- _Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?_
-- _Which URL do you navigate to in order to check that the ELK server is running?
+- In Detail:
+
+```bash
+$ cd /etc/ansible
+$ mkdir files
+# Clone Repository + IaC Files
+$ git clone https://github.com/jakeemry/project_1.git
+# Move Playbooks and hosts file Into `/etc/ansible`
+# Keep Configuration files in the files folder after updating configurations files, respectively
+$ cp project_1/playbooks/* .
+$ cp project_1/files/* ./files
+```
+
+- Configurations file updates
+
+  ```
+  output.elasticsearch:
+  hosts: ["10.1.0.4:9200"]
+  username: "elastic"
+  password: "changeme"
+
+  ...
+
+  setup.kibana:
+  host: "10.1.0.4:5601"
+  ```
+
+- After this, the commands below run the playbook:
+
+ ```bash
+ $ cd /etc/ansible
+ $ ansible-playbook install_elk.yml
+ $ ansible-playbook filebeat-playbook.yml
+ $ ansible-playbook metricbeat-playbook.yml
+ ```
+
+To verify success, wait five minutes to give ELK time to start up.
+Then, run: curl http://10.1.0.4:5601. This is the address of Kibana. If the installation succeeded, this command should print HTML to the console.
