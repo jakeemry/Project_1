@@ -1,4 +1,4 @@
-# GitHub Repository for UCSD Cybersecurity Bootcamp 
+# **GitHub Repository for UCSD Cybersecurity Bootcamp**
 
 # Project 1
 
